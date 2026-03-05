@@ -2,7 +2,7 @@ import { useState, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { motion } from 'framer-motion';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import type { UserFormData, PaymentResponse, ModalStep } from '../types';
 import { cn } from '../utils/cn';
 
@@ -127,11 +127,26 @@ const UserDetailForm = ({ onSubmit, loading }: UserDetailFormProps) => {
 };
 
 interface PaymentFormProps {
+  clientSecret: string;
+  billingDetails: { name: string; email: string };
   onSuccess: () => void;
   onError: (error: string) => void;
 }
 
-const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
+const cardElementOptions = {
+  style: {
+    base: {
+      fontSize: '16px',
+      color: '#1a1a1a',
+      '::placeholder': { color: '#9ca3af' },
+    },
+    invalid: {
+      color: '#dc2626',
+    },
+  },
+};
+
+const PaymentForm = ({ clientSecret, billingDetails, onSuccess, onError }: PaymentFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -140,25 +155,31 @@ const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
     e.preventDefault();
     if (!stripe || !elements) return;
 
-    setIsProcessing(true);
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) {
+      onError('Card form not ready');
+      return;
+    }
 
-    console.log('[Payment] Confirming payment...');
-    const result = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: window.location.origin + '/completion',
+    setIsProcessing(true);
+    console.log('[Payment] Confirming with confirmCardPayment...');
+
+    const { error } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: cardElement,
+        billing_details: {
+          name: billingDetails.name,
+          email: billingDetails.email,
+        },
       },
-      redirect: 'if_required',
     });
 
-    console.log('[Payment] Result:', result);
-
-    if (result.error) {
-      console.error('[Payment] Error:', result.error);
-      onError(result.error.message || 'Payment failed');
+    if (error) {
+      console.error('[Payment] Error:', error);
+      onError(error.message || 'Payment failed');
       setIsProcessing(false);
     } else {
-      console.log('[Payment] Success, paymentIntent:', result.paymentIntent);
+      console.log('[Payment] Success');
       onSuccess();
     }
   };
@@ -185,11 +206,9 @@ const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <PaymentElement
-          options={{
-            layout: 'tabs'
-          }}
-        />
+        <div className="p-4 border border-gray-300 rounded-sm bg-white">
+          <CardElement options={cardElementOptions} />
+        </div>
 
         <button
           type="submit"
@@ -245,6 +264,7 @@ interface WaitlistModalProps {
 export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
   const [step, setStep] = useState<ModalStep>('FORM');
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [submittedFormData, setSubmittedFormData] = useState<UserFormData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleFormSubmit = async (formData: UserFormData) => {
@@ -252,7 +272,8 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
     setError(null);
 
     try {
-      const url = `${import.meta.env.VITE_API_URL}/next/pre-signup-requests/`;
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+      const url = `${baseUrl}/next/pre-signup-requests/`;
       const body = {
         ...formData,
         location: 2,
@@ -283,6 +304,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
       if (data.clientSecret) {
         console.log('[Waitlist] clientSecret prefix:', data.clientSecret.substring(0, 12) + '...');
         setClientSecret(data.clientSecret);
+        setSubmittedFormData(formData);
         setStep('PAYMENT');
       } else {
         throw new Error('Invalid response from server');
@@ -311,6 +333,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
   const handleClose = () => {
     setStep('FORM');
     setClientSecret(null);
+    setSubmittedFormData(null);
     setError(null);
     onClose();
   };
@@ -369,15 +392,14 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
                   </motion.div>
                 )}
 
-                {step === 'PAYMENT' && clientSecret && (
-                  <Elements
-                    stripe={stripePromise}
-                    options={{
-                      clientSecret,
-                      appearance: { theme: 'stripe' }
-                    }}
-                  >
+                {step === 'PAYMENT' && clientSecret && submittedFormData && (
+                  <Elements stripe={stripePromise}>
                     <PaymentForm
+                      clientSecret={clientSecret}
+                      billingDetails={{
+                        name: `${submittedFormData.firstName} ${submittedFormData.lastName}`.trim(),
+                        email: submittedFormData.email,
+                      }}
                       onSuccess={handlePaymentSuccess}
                       onError={handlePaymentError}
                     />
