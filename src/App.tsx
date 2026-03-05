@@ -1,8 +1,11 @@
 import { Layout } from './components/Layout';
 import { Hero } from './sections/Hero';
-import { Manifesto } from './sections/Manifesto';
-import { London } from './sections/London';
-import { GetInvolved } from './sections/GetInvolved';
+import { About } from './sections/About';
+import { Village } from './sections/Village';
+import { JoinUs } from './sections/JoinUs';
+import { FAQ } from './sections/FAQ';
+import { CTABand } from './sections/CTABand';
+import { Footer } from './sections/Footer';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
 
 function App() {
@@ -11,9 +14,12 @@ function App() {
   return (
     <Layout>
       <Hero />
-      <Manifesto />
-      <London />
-      <GetInvolved />
+      <About />
+      <Village />
+      <JoinUs />
+      <FAQ />
+      <CTABand />
+      <Footer />
     </Layout>
   );
 }
