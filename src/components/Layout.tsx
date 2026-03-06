@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '../utils/cn';
 
@@ -20,6 +20,7 @@ export function Layout({ children, onApply }: LayoutProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isApplyPage = location.pathname === '/apply';
 
   useEffect(() => {
@@ -70,6 +71,12 @@ export function Layout({ children, onApply }: LayoutProps) {
               <a
                 key={item.id}
                 href={`#${item.id}`}
+                onClick={(e) => {
+                  if (isApplyPage) {
+                    e.preventDefault();
+                    navigate(`/#${item.id}`);
+                  }
+                }}
                 className={cn(
                   'flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.15em] transition-colors duration-200 group',
                   activeSection === item.id ? 'text-accent' : 'text-secondary hover:text-ink'
@@ -165,7 +172,13 @@ export function Layout({ children, onApply }: LayoutProps) {
                       <a
                         key={item.id}
                         href={`#${item.id}`}
-                        onClick={() => setMobileMenuOpen(false)}
+                        onClick={(e) => {
+                          setMobileMenuOpen(false);
+                          if (isApplyPage) {
+                            e.preventDefault();
+                            navigate(`/#${item.id}`);
+                          }
+                        }}
                         className="flex items-center gap-4 font-mono text-xs uppercase tracking-widest text-ink"
                       >
                         <span className="text-secondary tabular-nums">{item.number}</span>
