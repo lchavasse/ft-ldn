@@ -21,7 +21,7 @@ function MainPage({ onApply }: { onApply: () => void }) {
       <JoinUs onApply={onApply} />
       <FAQ />
       <CTABand onApply={onApply} />
-      <Footer onApply={onApply} />
+      <Footer />
     </>
   );
 }

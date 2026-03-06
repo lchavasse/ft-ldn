@@ -137,10 +137,6 @@ const communities = [
   },
 ];
 
-interface FooterProps {
-  onApply: () => void;
-}
-
 function getUtmParams(): { utm_source: string; utm_medium: string; utm_campaign: string } {
   const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   return {
@@ -150,7 +146,7 @@ function getUtmParams(): { utm_source: string; utm_medium: string; utm_campaign:
   };
 }
 
-export function Footer({ onApply }: FooterProps) {
+export function Footer() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
