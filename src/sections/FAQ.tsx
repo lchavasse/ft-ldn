@@ -34,7 +34,7 @@ export function FAQ() {
       <section
         id="faq"
         data-section="faq"
-        className="py-14 md:py-24 pl-8 md:pl-12 pr-4 md:pr-16 min-[1600px]:pr-[14%]"
+        className="py-14 md:py-24 pl-8 md:pl-12 pr-4 md:max-[1599px]:pr-16 min-[1600px]:pr-[14%]"
       >
         <SectionLabel number="04" title="Questions" />
 

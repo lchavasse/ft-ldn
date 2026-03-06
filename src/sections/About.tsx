@@ -6,9 +6,7 @@ export function About() {
     <>
       <DashedDivider />
       <section
-        id="about"
-        data-section="about"
-        className="py-14 pl-8 md:pl-12 pr-4 md:pr-16 min-[1600px]:pr-[14%]"
+        className="py-14 pl-8 md:pl-12 pr-4 md:max-[1599px]:pr-16 min-[1600px]:pr-[14%]"
       >
         <motion.blockquote
           initial={{ opacity: 0, y: 16 }}

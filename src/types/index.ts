@@ -5,6 +5,12 @@ export interface UserFormData {
   lastName: string;
   whatAreYouWorkingOn: string;
   whatIsYourExpertise: string;
+  socialHandle?: string;
+  floor?: string;
+  organization?: string;
+  role?: string;
+  howDidYouHear?: string;
+  contribution?: string;
 }
 
 export interface PaymentResponse {
@@ -12,4 +18,4 @@ export interface PaymentResponse {
   clientSecret: string;
 }
 
-export type ModalStep = 'FORM' | 'SUBMITTING' | 'PAYMENT' | 'CONFIRMING' | 'SUCCESS' | 'ERROR';
+export type ModalStep = 'step1' | 'step2' | 'step3' | 'submitting' | 'payment' | 'success' | 'error';

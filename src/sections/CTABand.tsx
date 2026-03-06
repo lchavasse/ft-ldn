@@ -1,15 +1,15 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { DashedDivider } from '../components/DesignElements';
-import { WaitlistModal } from '../components/WaitlistModal';
 
-export function CTABand() {
-  const [modalOpen, setModalOpen] = useState(false);
+interface CTABandProps {
+  onApply: () => void;
+}
 
+export function CTABand({ onApply }: CTABandProps) {
   return (
     <>
       <DashedDivider />
-      <section className="py-24 pl-8 md:pl-12 pr-4 md:pr-16 min-[1600px]:pr-[14%] bg-ink/[0.025]">
+      <section className="py-24 pl-8 md:pl-12 pr-4 md:max-[1599px]:pr-16 min-[1600px]:pr-[14%] bg-ink/[0.025]">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -42,7 +42,7 @@ export function CTABand() {
               Become a founding citizen of Frontier Tower London.
             </p>
             <button
-              onClick={() => setModalOpen(true)}
+              onClick={onApply}
               className="border border-ink font-mono text-[11px] uppercase tracking-[0.2em] py-4 px-10 text-ink hover:bg-ink hover:text-paper transition-all duration-200"
             >
               Apply Now →
@@ -56,8 +56,6 @@ export function CTABand() {
           </div>
         </motion.div>
       </section>
-
-      <WaitlistModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </>
   );
 }

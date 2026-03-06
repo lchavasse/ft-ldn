@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { DashedDivider, SectionLabel } from '../components/DesignElements';
-import { WaitlistModal } from '../components/WaitlistModal';
 
 const membershipIncludes = [
   'All common areas',
@@ -12,20 +10,22 @@ const membershipIncludes = [
   'Generous guest policy',
 ];
 
-export function JoinUs() {
-  const [modalOpen, setModalOpen] = useState(false);
+interface JoinUsProps {
+  onApply: () => void;
+}
 
+export function JoinUs({ onApply }: JoinUsProps) {
   return (
     <>
       <DashedDivider />
       <section
         id="join"
         data-section="join"
-        className="py-14 md:py-24 px-6 md:pl-12 md:pr-16 min-[1600px]:pr-[14%]"
+        className="py-14 md:py-24 md:pl-12 md:max-[1599px]:pr-16 min-[1600px]:pr-[14%]"
       >
         <SectionLabel number="03" title="Join Us" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-20 items-start max-w-5xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-20 items-start max-w-6xl mx-auto">
           {/* Left — expressive type list */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -103,7 +103,7 @@ export function JoinUs() {
 
               {/* CTA */}
               <button
-                onClick={() => setModalOpen(true)}
+                onClick={onApply}
                 className="w-full border border-ink font-mono text-[11px] uppercase tracking-[0.2em] py-3 px-6 text-ink hover:bg-ink hover:text-paper transition-all duration-200"
               >
                 Apply to the Waitlist →
@@ -116,8 +116,6 @@ export function JoinUs() {
           </motion.div>
         </div>
       </section>
-
-      <WaitlistModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </>
   );
 }

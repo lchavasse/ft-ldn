@@ -47,7 +47,7 @@ export function Village() {
       <section
         id="village"
         data-section="village"
-        className="py-14 md:py-24 pl-8 md:pl-12 pr-4 md:pr-16 min-[1600px]:pr-[14%] relative"
+        className="py-14 md:py-24 pl-8 md:pl-12 pr-4 md:max-[1599px]:pr-16 min-[1600px]:pr-[14%] relative"
       >
         <SectionLabel number="02" title="The Village" />
 
@@ -80,7 +80,7 @@ export function Village() {
                 >
                   {/* Image panel */}
                   <div className="w-full md:w-[44%] md:shrink-0 relative p-6 md:p-8 flex items-center justify-center">
-                    <TapeStrip className="absolute top-11 left-1/2 -translate-x-1/2 z-10" />
+                    <TapeStrip className="absolute top-9 left-1/2 -translate-x-1/2 z-10" />
                     <img
                       src={card.image}
                       alt={card.title}

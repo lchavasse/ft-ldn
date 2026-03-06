@@ -27,7 +27,9 @@ Single-page React 19 + TypeScript app built with Vite. Marketing site for a resi
 
 **Payment flow** (`components/WaitlistModal.tsx`): Multi-step modal — form → API submission → Stripe Elements payment → success/error. Posts to `{VITE_API_URL}/next/pre-signup-requests/` and receives a Stripe `clientSecret`.
 
-**Environment variables** (`.env`): `VITE_STRIPE_PUBLISHABLE_KEY`, `VITE_API_URL`
+**Newsletter** (`sections/Footer.tsx`): Footer form uses site UI (pill input + black Subscribe button) and POSTs to `VITE_NEWSLETTER_SUBSCRIBE_URL` or `{VITE_API_URL}/next/newsletter-subscribe`. Body: `{ email, utm_source, utm_medium, utm_campaign }`. Backend must proxy to Beehiiv (`POST https://api.beehiiv.com/v2/publications/{publicationId}/subscriptions` with API key); respond 200/201 on success.
+
+**Environment variables** (`.env`): `VITE_STRIPE_PUBLISHABLE_KEY`, `VITE_API_URL`, optional `VITE_NEWSLETTER_SUBSCRIBE_URL`
 
 ## Conventions
 

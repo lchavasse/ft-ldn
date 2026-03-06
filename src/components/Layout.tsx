@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '../utils/cn';
 
 interface LayoutProps {
   children: React.ReactNode;
+  onApply?: () => void;
 }
 
 const navItems = [
@@ -13,10 +15,12 @@ const navItems = [
   { id: 'faq', number: '04', label: 'FAQ' },
 ];
 
-export function Layout({ children }: LayoutProps) {
+export function Layout({ children, onApply }: LayoutProps) {
   const [activeSection, setActiveSection] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const isApplyPage = location.pathname === '/apply';
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -48,7 +52,9 @@ export function Layout({ children }: LayoutProps) {
         <aside className="fixed top-0 left-0 h-screen w-1/5 flex flex-col p-8 z-30 border-r border-secondary/15 bg-paper">
           {/* FT Mark */}
           <div className="mb-8">
-            <img src="/icon.svg" alt="FT" className="w-10 h-10 mb-3" />
+            <a href="/">
+              <img src="/icon.svg" alt="FT" className="w-10 h-10 mb-3" />
+            </a>
             <div className="font-mono text-[9px] tracking-[0.18em] uppercase text-secondary leading-relaxed">
               Frontier Tower
               <br />
@@ -59,7 +65,7 @@ export function Layout({ children }: LayoutProps) {
           <div className="border-t border-secondary/20 mb-6" />
 
           {/* Nav */}
-          <nav className="flex-1 space-y-5">
+          <nav className="space-y-5">
             {navItems.map((item) => (
               <a
                 key={item.id}
@@ -81,9 +87,25 @@ export function Layout({ children }: LayoutProps) {
             ))}
           </nav>
 
+          {/* Become a Citizen — directly under the menu */}
+          {onApply && (
+            <div className="pt-4 mt-2">
+              <button
+                type="button"
+                onClick={onApply}
+                className="w-full font-mono text-[10px] uppercase tracking-[0.15em] text-ink border border-secondary/30 bg-paper hover:border-accent hover:text-accent transition-colors duration-200 py-3 px-4 text-center"
+              >
+                Become a Citizen
+              </button>
+            </div>
+          )}
+
+          {/* Spacer so footer stays at bottom */}
+          <div className="flex-1 min-h-4" />
+
           <div className="border-t border-secondary/20 pt-4">
             <div className="font-mono text-[9px] tracking-[0.18em] uppercase text-secondary/50 leading-relaxed">
-              Est. 2026
+              Launching May 2026
               <br />
               West London
             </div>
@@ -151,6 +173,20 @@ export function Layout({ children }: LayoutProps) {
                       </a>
                     ))}
                   </nav>
+                  {onApply && (
+                    <div className="border-t border-secondary/20 pt-6 mt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          onApply();
+                        }}
+                        className="w-full font-mono text-[10px] uppercase tracking-[0.15em] text-ink border border-secondary/30 bg-paper hover:border-accent hover:text-accent transition-colors duration-200 py-3 px-4 text-center"
+                      >
+                        Become a Citizen
+                      </button>
+                    </div>
+                  )}
                 </motion.div>
               </>
             )}
@@ -158,9 +194,16 @@ export function Layout({ children }: LayoutProps) {
         </>
       )}
 
-      <main className={cn('min-h-screen relative', !isMobile && 'ml-[20%]')}>
-        {/* Tower sketch — page-level, spans About + Village */}
-        <div className="absolute top-[82vh] right-0 w-[48%] opacity-[0.07] pointer-events-none select-none z-0">
+      <main className={cn(
+        'relative',
+        !isMobile && 'ml-[20%]',
+        isApplyPage ? 'h-screen overflow-hidden' : 'min-h-screen'
+      )}>
+        {/* Tower sketch — positioned at 70vh on main, 0 on apply so it sits within the viewport */}
+        <div className={cn(
+          'absolute right-20 w-[48%] opacity-[0.07] pointer-events-none select-none z-0',
+          isApplyPage ? 'top-0' : 'top-[70vh]'
+        )}>
           <img src="/tower_sketch_transparent.png" alt="" className="w-full" />
         </div>
         {children}
